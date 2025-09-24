@@ -18,6 +18,14 @@ module.exports = function (app) {
     .get(function (req, res){
       //response will be array of book objects
       //json res format: [{"_id": bookid, "title": book_title, "commentcount": num_of_comments },...]
+      if (books.length === 0)
+      {
+        return res.json([]);
+        //return res.status(404).send('no books exist');
+        
+      }
+      // Return the list of books with comment count
+      
       const booksWithCommentCount = books.map(book => ({
         _id: book._id,
         title: book.title,
@@ -28,7 +36,8 @@ module.exports = function (app) {
     
     .post(function (req, res){
       let title = req.body.title;
-      //response will contain new book object including atleast _id and title
+      
+      //response will contain new book object including atleast _id and title 
       if (!title) {
         return res.status(400).send('missing required field title');
       }
@@ -50,6 +59,7 @@ module.exports = function (app) {
     
     .delete(function(req, res){
       //if successful response will be 'complete delete successful'
+      if (books.length === 0)
       books = [];
       nextId = 1;
       res.send('complete delete successful');
@@ -82,9 +92,9 @@ module.exports = function (app) {
       if (!comment) {
         return res.status(400).send('missing required field comment');
       }
-      
+        // Find the book by id 
       const book = books.find(b => b._id === bookid);
-      
+      // if the book doent not exist return error
       if (!book) {
         return res.status(404).send('no book exists');
       }
